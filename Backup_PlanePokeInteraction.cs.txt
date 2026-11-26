@@ -1,0 +1,41 @@
+using UnityEngine;
+using UnityEngine.XR.ARFoundation;
+
+public class PlanePokeInteraction : MonoBehaviour
+{
+    [Header("Objetos")]
+    [SerializeField] private GameObject prefab;
+
+    private GameObject obj;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        ARPlane plane = other.GetComponent<ARPlane>();
+
+        if (plane == null)
+            return;
+
+        if (prefab == null)
+            return;
+
+        // Posição do contacto do dedo com o plano
+        Vector3 position = transform.position;
+
+        // Orientação do plano
+        Quaternion rotation = plane.transform.rotation;
+
+        if (obj != null)
+        {
+            float previousY = obj.transform.eulerAngles.y;
+
+            Destroy(obj);
+
+            Vector3 angles = rotation.eulerAngles;
+            angles.y = previousY;
+
+            rotation = Quaternion.Euler(angles);
+        }
+
+        obj = Instantiate(prefab, position, rotation);
+    }
+}
